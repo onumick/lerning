@@ -1,0 +1,645 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap');
+
+/* =========================================
+   Base & Reset
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --warm-bg: #fdf8f0;
+    --card-bg: #fffef9;
+    --ink: #2a2318;
+    --ink-mid: #6b5f4a;
+    --ink-light: #a89880;
+    --amber-accent: #c8892a;
+    --amber-soft: #f5e8c8;
+    --green-soft: #e4f0de;
+    --green-accent: #4a7c59;
+    --red-soft: #fdecea;
+    --red-accent: #b84040;
+    --border: rgba(42, 35, 24, 0.12);
+    --border-strong: rgba(42, 35, 24, 0.22);
+    --radius: 14px;
+    --shadow: 0 2px 16px rgba(42, 35, 24, 0.07);
+    --level-3-accent: #5b7fb5;
+    --flip-time: 0.6s;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--warm-bg);
+    color: var(--ink);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Lora', serif;
+    color: var(--ink);
+}
+
+p,
+button,
+label {
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* =========================================
+   Layout & Structure
+   ========================================= */
+header {
+    background-color: var(--card-bg);
+    color: var(--ink);
+    padding: 1rem;
+    border-bottom: 0.5px solid var(--border-strong);
+}
+
+.header-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-container h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+main {
+    flex: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    width: 100%;
+}
+
+.view {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.view.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden {
+    display: none !important;
+}
+
+.intro {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.intro h2 {
+    margin-bottom: 0.4rem;
+    font-size: 1.85rem;
+    font-weight: 500;
+}
+
+.intro p {
+    font-size: 0.88rem;
+    color: var(--ink-mid);
+    font-weight: 300;
+}
+
+/* =========================================
+   Dashboard Cards
+   ========================================= */
+.level-grid,
+.phase-grid,
+.sublevel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+.dashboard-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--card-bg);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.5rem 1.4rem 1.6rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--amber-accent);
+}
+
+#levels-container .dashboard-card:nth-child(2)::before {
+    background: var(--green-accent);
+}
+
+#levels-container .dashboard-card:nth-child(3)::before {
+    background: var(--level-3-accent);
+}
+
+.dashboard-card:hover,
+.dashboard-card:focus {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    outline: none;
+}
+
+.dashboard-card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.dashboard-card p {
+    color: var(--ink-mid);
+    font-size: 0.88rem;
+    font-weight: 300;
+}
+
+/* =========================================
+   Learning View & Flashcard Logic
+   ========================================= */
+.learning-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.3rem;
+}
+
+.progress-bar-container {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-right: 1rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--amber-accent);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.card-counter {
+    font-size: 0.75rem;
+    color: var(--ink-mid);
+    border: 0.5px solid var(--border-strong);
+    border-radius: 20px;
+    background: var(--warm-bg);
+    padding: 0.2rem 0.6rem;
+    font-weight: 400;
+}
+
+/* --- 3D Flip Card Container --- */
+.scene {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    perspective: 1500px;
+    min-height: 350px;
+    height: min(72vh, 560px);
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    min-height: 350px;
+    position: relative;
+    transition: transform var(--flip-time);
+    transform-style: preserve-3d;
+}
+
+.card.is-flipped {
+    transform: rotateY(180deg);
+}
+
+.card__face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background: var(--card-bg);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem;
+    text-align: center;
+}
+
+.card__face::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    border-radius: var(--radius) 0 0 var(--radius);
+    background: var(--amber-accent);
+}
+
+.card__face--back {
+    transform: rotateY(180deg);
+}
+
+.card-content {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card__face h3 {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink-light);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.65rem;
+}
+
+.instruction {
+    font-size: 0.88rem;
+    color: var(--ink-mid);
+    font-weight: 300;
+    margin-bottom: 1.8rem;
+}
+
+.target-text {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.4;
+    white-space: pre-wrap;
+    width: 100%;
+    max-height: min(36vh, 270px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.35rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+}
+
+.target-text::-webkit-scrollbar {
+    width: 6px;
+}
+
+.target-text::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 12px;
+}
+
+.target-text--long {
+    font-size: 20px;
+    line-height: 1.45;
+    text-align: left;
+}
+
+/* =========================================
+   Buttons & Controls
+   ========================================= */
+.btn {
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+    opacity: 0.85;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn-large {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-size: 15px;
+}
+
+.primary-btn,
+.secondary-btn,
+.play-btn {
+    background: var(--amber-soft);
+    border: 1px solid var(--amber-accent);
+    color: #7a5010;
+}
+
+.success-btn {
+    background: var(--green-soft);
+    border: 1px solid var(--green-accent);
+    color: var(--green-accent);
+}
+
+.danger-btn {
+    background: var(--red-soft);
+    border: 1px solid #d47070;
+    color: var(--red-accent);
+}
+
+.back-btn {
+    background: transparent;
+    color: var(--ink-mid);
+    border: none;
+    font-size: 13px;
+    text-decoration: none;
+    padding: 0.2rem 0.4rem;
+}
+
+.play-btn {
+    width: 84px;
+    height: 84px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem auto;
+}
+
+.play-btn svg {
+    margin-left: 5px;
+}
+
+.play-hint {
+    color: var(--ink-light);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+/* =========================================
+   Voice Toggle & Recording UI
+   ========================================= */
+.voice-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-strong);
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--amber-accent);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--amber-accent);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.recording-ui {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.record-btn {
+    background-color: var(--ink-light);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+.record-btn:hover { background-color: var(--ink-mid); }
+
+.record-btn.is-recording {
+    background-color: #d0021b; /* Pulse red */
+    animation: pulse 1.5s infinite;
+}
+
+.record-btn.has-recording {
+    background-color: var(--success);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(208, 2, 27, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(208, 2, 27, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(208, 2, 27, 0); }
+}
+
+.recording-status {
+    font-size: 0.8rem;
+    color: var(--ink-mid);
+}
+
+/* =========================================
+   Verification & Completion Panels
+   ========================================= */
+.verification-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(42, 35, 24, 0.22);
+    z-index: 999;
+}
+
+.verification-panel {
+    background: var(--card-bg);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    z-index: 1000;
+}
+
+.verification-panel h3 {
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+}
+
+.correction-box {
+    background: var(--warm-bg);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    border: 0.5px solid var(--border-strong);
+    border-left: 6px solid var(--amber-accent);
+}
+
+.did-you-get-it {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.verification-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.verification-buttons button {
+    flex: 1;
+}
+
+.completion-panel {
+    text-align: center;
+    background: var(--card-bg);
+    border: 0.5px solid var(--border-strong);
+    padding: 3rem 2rem;
+    border-radius: var(--radius);
+    margin-top: 2rem;
+}
+
+.success-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.completion-panel h2 {
+    color: var(--green-accent);
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.completion-panel p {
+    margin-bottom: 2rem;
+    color: var(--ink-mid);
+    font-size: 0.88rem;
+    font-weight: 300;
+}
+
+/* =========================================
+   Mobile Responsiveness
+   ========================================= */
+@media (max-width: 600px) {
+    .target-text {
+        font-size: 1.35rem;
+        max-height: min(40vh, 250px);
+    }
+
+    .target-text--long {
+        font-size: 1.2rem;
+    }
+
+    .card__face {
+        padding: 1.5rem;
+    }
+
+    .verification-buttons {
+        flex-direction: column;
+    }
+}
+
+/* =========================================
+   Completed State Tracking
+   ========================================= */
+.dashboard-card.completed {
+    background-color: #f0fdf4; /* faint green */
+    border: 1px solid #22c55e;
+    opacity: 0.85;
+}
+
+.dashboard-card.completed p {
+    color: #15803d;
+}
+
+.status-icon {
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}

@@ -1,0 +1,18 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - heading "Listen & Write" [level=1] [ref=e4]
+  - main [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - heading "The Roadmap" [level=2] [ref=e8]
+        - paragraph [ref=e9]: Select a level to start practicing.
+      - generic [ref=e10]:
+        - generic [ref=e11] [cursor=pointer]:
+          - 'heading "Level 1: Sentences" [level=3] [ref=e12]'
+          - paragraph [ref=e13]: A progressive collection of 1,000 English sentences for learners in Botswana, moving from simple daily phrases to complex written expression.
+        - generic [ref=e14] [cursor=pointer]:
+          - 'heading "Level 2: Paragraphs" [level=3] [ref=e15]'
+          - paragraph [ref=e16]: A structured series of paragraphs progressing from simple narrative to descriptive/explanatory to formal/argumentative writing, grounded in Botswana daily life.
+        - generic [ref=e17] [cursor=pointer]:
+          - 'heading "Level 3: Full Documents" [level=3] [ref=e18]'
+          - paragraph [ref=e19]: Mastering forms and formal text

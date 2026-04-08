@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listen & Write</title>
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Meta tags for PWA/Mobile look and feel -->
+    <meta name="theme-color" content="#fdf8f0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1 id="app-title">Listen & Write</h1>
+            <button id="btn-back" class="btn back-btn hidden" aria-label="Go Back">
+                &larr; Back
+            </button>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- View 1: Level Selection (Dashboard) -->
+        <section id="view-dashboard" class="view active">
+            <div class="intro">
+                <h2>The Roadmap</h2>
+                <p>Select a level to start practicing.</p>
+            </div>
+            <div id="levels-container" class="level-grid">
+                <!-- Dynamically populated from JS -->
+            </div>
+        </section>
+
+        <!-- View 2a: Phase Selection -->
+        <section id="view-phases" class="view hidden">
+            <div class="intro">
+                <h2 id="phase-title">Select a Phase</h2>
+            </div>
+            <div id="phases-container" class="phase-grid">
+                <!-- Dynamically populated from JS -->
+            </div>
+        </section>
+
+        <!-- View 2b: Sub-Level Selection -->
+        <section id="view-sublevels" class="view hidden">
+            <div class="intro">
+                <h2 id="sublevel-title">Select a Part</h2>
+            </div>
+            <div id="sublevels-container" class="sublevel-grid">
+                <!-- Dynamically populated from JS -->
+            </div>
+        </section>
+
+        <!-- View 3: Learning Loop (Flashcard) -->
+        <section id="view-learning" class="view hidden">
+            <div class="learning-header">
+                <div class="progress-bar-container">
+                    <div id="progress-bar-fill" class="progress-fill"></div>
+                </div>
+                <div class="card-counter" id="card-counter">1 / 5</div>
+            </div>
+
+            <!-- The Flashcard Scene -->
+            <div class="scene scene--card" id="card-scene">
+                <div class="card" id="flashcard">
+                    <!-- Front of card (Study Phase) -->
+                    <div class="card__face card__face--front">
+                        <div class="card-content">
+                            <h3>Study Phase</h3>
+                            <p class="instruction">Read and visualize the sentence.</p>
+                            <p id="card-text-front" class="target-text"></p>
+                            
+                            <div class="voice-toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggle-custom-voice">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>Use my own voice</span>
+                            </div>
+                            
+                            <div id="recording-ui" class="recording-ui hidden">
+                                <button id="btn-record" class="btn record-btn" aria-label="Record Audio">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="mic-icon">
+                                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                                    </svg>
+                                </button>
+                                <p id="recording-status" class="recording-status">Tap to record</p>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button id="btn-flip" class="btn primary-btn btn-large">Flip to Listen & Write</button>
+                        </div>
+                    </div>
+
+                    <!-- Back of card (Dictation Phase) -->
+                    <div class="card__face card__face--back">
+                        <div class="card-content">
+                            <h3>Dictation Phase</h3>
+                            <p class="instruction">Grab your notebook. Listen and write what you hear.</p>
+                            
+                            <button id="btn-play-audio" class="btn play-btn" aria-label="Play Audio">
+                                <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                            </button>
+                            <p class="play-hint">Press Play</p>
+                        </div>
+
+                        <!-- This section appears when the user is ready to check -->
+                        <div class="card-actions" id="verify-action-container">
+                            <button id="btn-reveal" class="btn secondary-btn btn-large">Check Answer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verification Panel (Slides up or appears below) -->
+            <div id="verification-backdrop" class="verification-backdrop hidden"></div>
+            <div id="verification-panel" class="verification-panel hidden">
+                <h3>Self-Correction</h3>
+                <p class="instruction">Compare your notebook to the text below:</p>
+                <div class="correction-box">
+                    <p id="card-text-verify" class="target-text"></p>
+                </div>
+                
+                <h4 class="did-you-get-it">Did you get it right?</h4>
+                <div class="verification-buttons">
+                    <button id="btn-not-yet" class="btn danger-btn btn-large">Not Yet</button>
+                    <button id="btn-got-it" class="btn success-btn btn-large">I Got It!</button>
+                </div>
+            </div>
+            
+            <!-- Completion Panel -->
+            <div id="completion-panel" class="completion-panel hidden">
+                <div class="success-icon">🏆</div>
+                <h2>Great job!</h2>
+                <p>You have completed this topic.</p>
+                <button id="btn-finish-topic" class="btn primary-btn btn-large">Back to Topics</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
