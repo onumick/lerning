@@ -308,6 +308,9 @@ main {
     max-height: min(36vh, 270px);
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
     padding-right: 0.35rem;
     scrollbar-width: thin;
     scrollbar-color: var(--border-strong) transparent;
